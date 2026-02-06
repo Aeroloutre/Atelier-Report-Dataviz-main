@@ -1,5 +1,4 @@
 """
-🏠 Page d'accueil - Superstore BI
 Point d'entrée de l'application multi-page
 """
 
@@ -7,7 +6,6 @@ import streamlit as st
 
 st.set_page_config(
     page_title="Superstore BI",
-    page_icon="🏠",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -75,45 +73,27 @@ st.markdown("""
 # Header
 st.markdown("""
 <div class="home-header">
-    <h1>🛒 Superstore BI</h1>
-    <p>Plateforme d'analyse Business Intelligence</p>
+    <h1>Accedez à un dashboard personnalisé !</h1>
 </div>
 """, unsafe_allow_html=True)
 
 # Navigation cards
-st.markdown("### 📊 Choisissez un dashboard")
+st.markdown("### Choisissez un dashboard")
 
 col1, col2 = st.columns(2)
 
 with col1:
     st.markdown("""
     <div class="page-card">
-        <div class="page-card-icon">📈</div>
         <h3>Dashboard Commercial</h3>
-        <p>Vue d'ensemble de la performance des ventes, KPIs commerciaux, évolution du CA et analyse clients.</p>
-    </div>
     """, unsafe_allow_html=True)
     if st.button("Accéder →", key="commercial", use_container_width=True):
-        st.switch_page("pages/commercialDashboard.py")
+        st.switch_page("pages/Dashboard-Commercial.py")
 
 with col2:
     st.markdown("""
     <div class="page-card">
-        <div class="page-card-icon">🛒</div>
-        <h3>Dashboard Général</h3>
-        <p>Analyse complète du dataset Superstore avec filtres avancés, produits, catégories et géographie.</p>
-    </div>
+        <h3>Dashboard donné au départ</h3>
     """, unsafe_allow_html=True)
     if st.button("Accéder →", key="general", use_container_width=True):
-        st.switch_page("pages/dashboard.py")
-
-# Footer
-st.markdown("---")
-st.markdown(
-    """
-    <div style='text-align: center; color: #999; font-size: 0.85rem;'>
-        💡 Utilisez le menu latéral pour naviguer entre les pages
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+        st.switch_page("pages/Dashboard.py")
