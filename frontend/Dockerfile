@@ -17,8 +17,9 @@ RUN pip install --no-cache-dir \
     requests==2.31.0 \
     pandas==2.1.4
 
-COPY dashboard.py .
-COPY commercialDashboard.py .
+# Copier tous les fichiers Python et le dossier pages/
+COPY app.py .
+COPY pages/ ./pages/
 
 EXPOSE 8501
 
@@ -32,4 +33,4 @@ RUN mkdir -p ~/.streamlit && \
 HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
     CMD curl --fail http://localhost:8501/_stcore/health || exit 1
 
-CMD ["streamlit", "run", "dashboard.py", "--server.address", "0.0.0.0", "--server.runOnSave", "true"]
+CMD ["streamlit", "run", "app.py", "--server.address", "0.0.0.0", "--server.runOnSave", "true"]
