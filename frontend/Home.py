@@ -80,7 +80,7 @@ st.markdown("""
 # Navigation cards
 st.markdown("### Choisissez un dashboard")
 
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns(3)
 
 with col1:
     st.markdown("""
@@ -97,3 +97,11 @@ with col2:
     """, unsafe_allow_html=True)
     if st.button("Accéder →", key="general", use_container_width=True):
         st.switch_page("pages/Dashboard.py")
+
+with col3:
+    st.markdown("""
+    <div class="page-card">
+        <h3>DashBoard CEO</h3>
+    """, unsafe_allow_html=True)
+    if st.button("Accéder →", key="ceo", use_container_width=True):
+        st.switch_page("pages/CEODashboard.py")
