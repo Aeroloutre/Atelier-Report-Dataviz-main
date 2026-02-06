@@ -13,7 +13,7 @@ import os
 
 st.set_page_config(
     page_title="Dashboard Commercial",
-    page_icon="📈",
+    page_icon="",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -35,29 +35,65 @@ st.markdown(f"""
 <style>
     /* Reset et base */
     .main .block-container {{
-        padding: 1rem 2rem;
+        padding: 0.5rem 2rem 1rem 2rem;
         max-width: 100%;
     }}
     
     /* Header principal */
     .dashboard-header {{
-        background: linear-gradient(135deg, {COLORS['primary']} 0%, {COLORS['secondary']} 100%);
-        padding: 1.5rem 2rem;
-        border-radius: 12px;
-        margin-bottom: 1.5rem;
+        background: {COLORS['primary']};
+        padding: 1.8rem 2.5rem;
+        margin: -1rem -2rem 1.5rem -2rem;
         color: white;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }}
     
-    .dashboard-header h1 {{
+    .header-left {{
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }}
+    
+    .header-icon {{
+        font-size: 2.2rem;
+    }}
+    
+    .header-title {{
         margin: 0;
-        font-size: 1.8rem;
-        font-weight: 600;
+        font-size: 1.6rem;
+        font-weight: 700;
+        letter-spacing: -0.5px;
     }}
     
-    .dashboard-header p {{
-        margin: 0.5rem 0 0 0;
-        opacity: 0.9;
-        font-size: 0.95rem;
+    .header-subtitle {{
+        margin: 0.2rem 0 0 0;
+        opacity: 0.7;
+        font-size: 0.85rem;
+        font-weight: 400;
+    }}
+    
+    .header-right {{
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }}
+    
+    .header-stat {{
+        text-align: right;
+    }}
+    
+    .header-stat-value {{
+        font-size: 1.1rem;
+        font-weight: 700;
+    }}
+    
+    .header-stat-label {{
+        font-size: 0.7rem;
+        opacity: 0.7;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }}
     
     /* Cartes KPI */
@@ -66,17 +102,17 @@ st.markdown(f"""
         border-radius: 12px;
         padding: 1.2rem;
         box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        border-left: 4px solid {COLORS['accent']};
         height: 100%;
+        text-align: center;
     }}
     
     .kpi-label {{
-        font-size: 0.85rem;
-        color: #666;
+        font-size: 0.8rem;
+        color: #888;
         font-weight: 500;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        margin-bottom: 0.3rem;
+        margin-bottom: 0.4rem;
     }}
     
     .kpi-value {{
@@ -86,33 +122,30 @@ st.markdown(f"""
         margin: 0;
     }}
     
-    .kpi-delta {{
-        font-size: 0.85rem;
-        margin-top: 0.3rem;
+    .kpi-subtitle {{
+        font-size: 0.8rem;
+        color: {COLORS['accent']};
+        font-weight: 500;
+        margin-top: 0.4rem;
     }}
-    
-    .kpi-delta.positive {{ color: {COLORS['success']}; }}
-    .kpi-delta.negative {{ color: {COLORS['danger']}; }}
     
     /* Section insight */
     .insight-box {{
-        background: linear-gradient(135deg, #667eea22 0%, #764ba222 100%);
-        border-left: 4px solid {COLORS['accent']};
-        padding: 1rem 1.2rem;
-        border-radius: 8px;
-        margin: 1rem 0;
+        padding: 0.5rem 0 0 0;
+        margin: 0;
     }}
     
     .insight-box h4 {{
-        margin: 0 0 0.5rem 0;
-        color: {COLORS['primary']};
-        font-size: 0.95rem;
+        display: inline;
+        color: {COLORS['accent']};
+        font-size: 0.8rem;
+        font-weight: 600;
     }}
     
     .insight-box p {{
-        margin: 0;
-        color: #555;
-        font-size: 0.9rem;
+        display: inline;
+        color: white;
+        font-size: 0.85rem;
         line-height: 1.5;
     }}
     
@@ -120,7 +153,7 @@ st.markdown(f"""
     .section-title {{
         font-size: 1.1rem;
         font-weight: 600;
-        color: {COLORS['dark']};
+        color: {COLORS['light']};
         margin: 1.5rem 0 1rem 0;
         padding-bottom: 0.5rem;
         border-bottom: 2px solid {COLORS['accent']};
@@ -168,7 +201,7 @@ def appeler_api(endpoint: str, params: dict = None):
         st.error("🔌 **Connexion impossible** — Vérifiez que l'API est démarrée")
         st.stop()
     except Exception as e:
-        st.error(f"⚠️ Erreur: {e}")
+        st.error(f"Erreur: {e}")
         st.stop()
 
 def format_currency(value: float) -> str:
@@ -189,19 +222,14 @@ def format_percent(value: float) -> str:
     """Formate les pourcentages"""
     return f"{value:.1f}%"
 
-def create_kpi_card(label: str, value: str, delta: str = None, delta_positive: bool = True):
+def create_kpi_card(label: str, value: str, subtitle: str = None):
     """Crée une carte KPI HTML"""
-    delta_html = ""
-    if delta:
-        delta_class = "positive" if delta_positive else "negative"
-        icon = "↑" if delta_positive else "↓"
-        delta_html = f'<p class="kpi-delta {delta_class}">{icon} {delta}</p>'
-    
+    subtitle_html = f'<p class="kpi-subtitle">{subtitle}</p>' if subtitle else ""
     return f"""
     <div class="kpi-container">
         <p class="kpi-label">{label}</p>
         <p class="kpi-value">{value}</p>
-        {delta_html}
+        {subtitle_html}
     </div>
     """
 
@@ -209,7 +237,7 @@ def create_insight_box(title: str, content: str):
     """Crée une boîte d'insight"""
     return f"""
     <div class="insight-box">
-        <h4>💡 {title}</h4>
+        <h4>{title}</h4>
         <p>{content}</p>
     </div>
     """
@@ -227,10 +255,26 @@ except:
 # HEADER
 # ══════════════════════════════════════════════════════════════════════════════
 
-st.markdown("""
+st.markdown(f"""
 <div class="dashboard-header">
-    <h1>📈 Dashboard Commercial</h1>
-    <p>Vue d'ensemble de la performance des ventes • Données en temps réel</p>
+    <div class="header-left">
+        <span class="header-icon"></span>
+        <div>
+            <h1 class="header-title">Dashboard Commercial</h1>
+            <p class="header-subtitle">Performance des ventes en temps réel</p>
+        </div>
+    </div>
+    <div class="header-right">
+        <div class="header-stat">
+            <div class="header-stat-value">{info_api['nb_lignes']:,}</div>
+            <div class="header-stat-label">Transactions</div>
+        </div>
+        <div class="header-stat">
+            <div class="header-stat-value">{info_api['periode']['debut'][:4]} - {info_api['periode']['fin'][:4]}</div>
+            <div class="header-stat-label">Période</div>
+        </div>
+    </div>
+</div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -246,7 +290,7 @@ with col_f1:
     date_min = datetime.strptime(valeurs_filtres['plage_dates']['min'], '%Y-%m-%d')
     date_max = datetime.strptime(valeurs_filtres['plage_dates']['max'], '%Y-%m-%d')
     date_range = st.date_input(
-        "📅 Période",
+        "Période",
         value=(date_min, date_max),
         min_value=date_min,
         max_value=date_max
@@ -257,13 +301,13 @@ with col_f1:
         date_debut, date_fin = date_min, date_max
 
 with col_f2:
-    region = st.selectbox("🌍 Région", ["Toutes"] + valeurs_filtres['regions'])
+    region = st.selectbox("Région", ["Toutes"] + valeurs_filtres['regions'])
 
 with col_f3:
-    segment = st.selectbox("👥 Segment", ["Tous"] + valeurs_filtres['segments'])
+    segment = st.selectbox("Segment", ["Tous"] + valeurs_filtres['segments'])
 
 with col_f4:
-    categorie = st.selectbox("📦 Catégorie", ["Toutes"] + valeurs_filtres['categories'])
+    categorie = st.selectbox("Catégorie", ["Toutes"] + valeurs_filtres['categories'])
 
 # Paramètres de filtrage
 params = {
@@ -296,7 +340,7 @@ with col1:
     st.markdown(create_kpi_card(
         "Chiffre d'affaires",
         format_currency(kpi_data['ca_total']),
-        "sdfqsdfqsdf"
+        "Objectif principal"
     ), unsafe_allow_html=True)
 
 with col2:
@@ -337,7 +381,7 @@ col_left, col_right = st.columns([3, 2])
 
 # --- Graphique évolution temporelle ---
 with col_left:
-    st.markdown('<p class="section-title">📊 Évolution des Ventes</p>', unsafe_allow_html=True)
+    st.markdown('<p class="section-title">Évolution des Ventes</p>', unsafe_allow_html=True)
     
     temporal = appeler_api("/kpi/temporel", params={'periode': 'mois'})
     df_temporal = pd.DataFrame(temporal)
@@ -388,7 +432,7 @@ with col_left:
 
 # --- Performance par région ---
 with col_right:
-    st.markdown('<p class="section-title">🌍 Performance Régionale</p>', unsafe_allow_html=True)
+    st.markdown('<p class="section-title">Performance Régionale</p>', unsafe_allow_html=True)
     
     geo = appeler_api("/kpi/geographique")
     df_geo = pd.DataFrame(geo)
@@ -421,7 +465,7 @@ with col_right:
     part_marche = (region_leader['ca'] / df_geo['ca'].sum() * 100)
     st.markdown(create_insight_box(
         "Région leader",
-        f"La région **{region_leader['region']}** représente {part_marche:.0f}% du CA total "
+        f"La région {region_leader['region']} représente {part_marche:.0f}% du CA total "
         f"avec {region_leader['nb_clients']} clients actifs."
     ), unsafe_allow_html=True)
 
@@ -435,7 +479,7 @@ col_produits, col_categories = st.columns([3, 2])
 
 # --- Top Produits ---
 with col_produits:
-    st.markdown('<p class="section-title">🏆 Produits les Plus Vendus</p>', unsafe_allow_html=True)
+    st.markdown('<p class="section-title">Produits les Plus Vendus</p>', unsafe_allow_html=True)
     
     top_produits = appeler_api("/kpi/produits/top", params={'limite': 8, 'tri_par': 'ca'})
     df_produits = pd.DataFrame(top_produits)
@@ -469,7 +513,7 @@ with col_produits:
 
 # --- Répartition par catégorie ---
 with col_categories:
-    st.markdown('<p class="section-title">📦 Répartition par Catégorie</p>', unsafe_allow_html=True)
+    st.markdown('<p class="section-title">Répartition par Catégorie</p>', unsafe_allow_html=True)
     
     categories = appeler_api("/kpi/categories")
     df_cat = pd.DataFrame(categories)
@@ -512,11 +556,11 @@ st.markdown("<br>", unsafe_allow_html=True)
 # SECTION 4 : ANALYSE CLIENTS
 # ══════════════════════════════════════════════════════════════════════════════
 
-st.markdown('<p class="section-title">👥 Performance Clients</p>', unsafe_allow_html=True)
+st.markdown('<p class="section-title">Performance Clients</p>', unsafe_allow_html=True)
 
 clients_data = appeler_api("/kpi/clients", params={'limite': 5})
 
-col_c1, col_c2, col_c3 = st.columns([2, 2, 1])
+col_c1, col_c2 = st.columns(2)
 
 # --- Top Clients ---
 with col_c1:
@@ -563,31 +607,16 @@ with col_c2:
     ))
     
     fig_segments.update_layout(
-        title='Performance par Segment',
-        height=280,
-        margin=dict(l=0, r=0, t=40, b=0),
+        title=dict(text='Performance par Segment', font=dict(color='white', size=14)),
+        height=320,
+        margin=dict(l=0, r=0, t=60, b=0),
         barmode='group',
-        legend=dict(orientation="h", yanchor="bottom", y=1.02),
+        legend=dict(orientation="h", yanchor="top", y=-0.1, xanchor="center", x=0.5, font=dict(color='white')),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)'
     )
     
     st.plotly_chart(fig_segments, use_container_width=True)
-
-# --- Statistiques clés clients ---
-with col_c3:
-    rec = clients_data['recurrence']
-    taux_fidelite = (rec['clients_recurrents'] / rec['total_clients'] * 100) if rec['total_clients'] > 0 else 0
-    
-    st.markdown("#### 📊 Fidélisation")
-    st.metric("Clients totaux", format_number(rec['total_clients']))
-    st.metric("Taux de fidélité", format_percent(taux_fidelite))
-    st.metric("Cmd moy/client", f"{rec['nb_commandes_moyen']:.1f}")
-    
-    if taux_fidelite < 50:
-        st.warning("⚠️ Taux de fidélité faible")
-    else:
-        st.success("✅ Bonne fidélisation")
 
 # ══════════════════════════════════════════════════════════════════════════════
 # FOOTER
